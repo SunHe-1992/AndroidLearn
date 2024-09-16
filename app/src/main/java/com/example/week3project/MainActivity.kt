@@ -1,16 +1,38 @@
 package com.example.week3project
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.week3project.ui.theme.Week3ProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,14 +40,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Week3ProjectTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            Counter()
         }
     }
 }
@@ -37,6 +52,65 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
+@Composable
+fun Counter() {
+
+    val timer = remember { mutableStateOf(0) }
+    val pResource = painterResource(R.drawable.pic)
+    val nameInput = remember {
+        mutableStateOf("")
+    }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.Gray),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        var txt = Text(text = "Hello ${timer.value}", fontSize = 30.sp);
+        Row {
+            Button(onClick = {
+                timer.value += 1
+
+            }) {
+                Text(text = "button 1")
+            }
+
+            Button(onClick = {
+                timer.value -= 1
+
+                Log.d("Counter", "${timer.value}");
+            }) {
+                Text(text = "button 2")
+            }
+
+
+        }
+    }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.50f)
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    )
+    {
+        Image(
+            painter = pResource, contentDescription = "my image",
+            Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        )
+        Spacer(Modifier.height(10.dp))
+        TextField(value = nameInput.value, onValueChange = {
+            nameInput.value = it
+        })
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
