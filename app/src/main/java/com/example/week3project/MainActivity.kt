@@ -1,5 +1,6 @@
 package com.example.week3project
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -12,23 +13,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,15 +45,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "1233 $name!",
         modifier = modifier
     )
 }
 
 @Composable
 fun Counter() {
-
-    val timer = remember { mutableStateOf(0) }
+    val context = LocalContext.current
+    val counter = remember { mutableStateOf(0) }
     val pResource = painterResource(R.drawable.pic)
     val nameInput = remember {
         mutableStateOf("")
@@ -69,19 +66,19 @@ fun Counter() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        var txt = Text(text = "Hello ${timer.value}", fontSize = 30.sp);
+        var txt = Text(text = "Hello ${counter.value}", fontSize = 30.sp);
         Row {
             Button(onClick = {
-                timer.value += 1
+                counter.value += 1
 
             }) {
                 Text(text = "button 1")
             }
 
             Button(onClick = {
-                timer.value -= 1
+                counter.value -= 1
 
-                Log.d("Counter", "${timer.value}");
+                Log.d("Counter", "${counter.value}");
             }) {
                 Text(text = "button 2")
             }
@@ -92,7 +89,7 @@ fun Counter() {
     Column(
         Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.50f)
+            .fillMaxHeight(1f)
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -105,9 +102,23 @@ fun Counter() {
                 .height(300.dp)
         )
         Spacer(Modifier.height(10.dp))
-        TextField(value = nameInput.value, onValueChange = {
-            nameInput.value = it
-        })
+        TextField(
+            value = nameInput.value,
+            onValueChange = {
+                nameInput.value = it
+            },
+
+            )
+
+        FloatingActionButton(onClick = {
+            //navigate
+            val intent = Intent(context, SecondActivity::class.java)
+            intent.putExtra("counter", counter.value)
+            intent.putExtra("user name", nameInput.value)
+            context.startActivity(intent)
+        }) {
+            Text(text = "NEXT")
+        }
     }
 }
 
@@ -116,6 +127,7 @@ fun Counter() {
 @Composable
 fun GreetingPreview() {
     Week3ProjectTheme {
-        Greeting("Android")
+//        Greeting("Android")
+        Counter()
     }
 }
