@@ -13,6 +13,11 @@
         android:theme="@style/Theme.Week3Project"
         tools:targetApi="31">
         <activity
+            android:name="com.example.week3project.CreateNoteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_create_note"
+            android:theme="@style/Theme.Week3Project" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -23,9 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondActivity">
-
-        </activity>
+        <activity android:name=".SecondActivity"></activity>
     </application>
 
 </manifest>

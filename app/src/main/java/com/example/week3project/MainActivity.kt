@@ -1,5 +1,6 @@
 package com.example.week3project
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -110,24 +111,25 @@ fun Counter() {
 
             )
 
+//        FloatingActionButton(onClick = {
+//            //navigate
+//            val intent = Intent(context, SecondActivity::class.java)
+//            intent.putExtra("counter", counter.value)
+//            intent.putExtra("user name", nameInput.value)
+//            context.startActivity(intent)
+//        }) {
+//            Text(text = "NEXT")
+//        }
+
         FloatingActionButton(onClick = {
             //navigate
-            val intent = Intent(context, SecondActivity::class.java)
-            intent.putExtra("counter", counter.value)
-            intent.putExtra("user name", nameInput.value)
+            val intent = Intent(context, CreateNoteActivity::class.java)
+
             context.startActivity(intent)
         }) {
-            Text(text = "NEXT")
+            Text(text = "Create note")
         }
+
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Week3ProjectTheme {
-//        Greeting("Android")
-        Counter()
-    }
-}
