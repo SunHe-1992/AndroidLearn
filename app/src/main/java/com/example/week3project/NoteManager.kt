@@ -8,28 +8,40 @@ import java.io.FileOutputStream
 
 public class NoteManager {
 
-    private val notes: MutableList<Note> = mutableListOf()
-    public val name = "hello this is note manager"
+    private val dicNotes: MutableMap<Int, Note> = mutableMapOf()
     private val fileName = "user_notes.txt"
-    var uiContext: Context? = null
 
     constructor()
 
     fun SaveNote(context: Context, title: String, content: String) {
-        uiContext = context
-        var note = Note(title, content)
-        notes.add(note)
-//        notes.add(note)
-//        notes.add(note)
 
-        SaveToFile()
+        var note = Note(title, content, dicNotes.size)
+        dicNotes.put(note.index, note)
+        SaveToFile(context)
     }
 
-    fun SaveToFile() {
+    fun EditNote(context: Context, title: String, content: String, idx: Int) {
+        var note = getNote(idx)
+        dicNotes.put(
+            idx,
+            Note(title, content, idx)
+        )
+        SaveToFile(context)
+
+    }
+
+    fun DeleteNote(context: Context, idx: Int) {
+        var note = getNote(idx)
+        note.hidden = true
+        SaveToFile(context)
+
+    }
+
+    fun SaveToFile(context: Context) {
         val gson = Gson()
-        val jsonString = gson.toJson(notes)
-//        Log.d("NoteManager", jsonString);
-        val file = File(uiContext!!.filesDir, fileName)
+        val jsonString = gson.toJson(getNotes())
+        Log.d("NoteManager", "SaveToFile" + jsonString);
+        val file = File(context.filesDir, fileName)
         if (!file.exists()) {
             file.createNewFile()
         }
@@ -37,28 +49,25 @@ public class NoteManager {
         val fos = FileOutputStream(file)
         fos.write(data.toByteArray())
         fos.close()
-
-
-        //test
-        LoadFromFile()
     }
 
-    fun LoadFromFile() {
-        val file = File(uiContext!!.filesDir, fileName)
+    public fun LoadFromFile(context: Context) {
+
+        val file = File(context!!.filesDir, fileName)
         if (!file.exists()) {
 
         } else {
             var allText = file.readText()
-//            Log.d("NoteManager", "read text: " + allText);
+            Log.d("NoteManager", "LoadFromFile:" + allText);
             //all text to json:
             val gson = Gson()
             val notesArray = gson.fromJson(allText, Array<Note>::class.java)
-            notes.clear()
-            notes.addAll(notesArray)
-            for (note in notes) {
-                Log.d("NoteManager", "title: " + note.title + ", content: " + note.content);
-
+            dicNotes.values.clear()
+            for (note in notesArray) {
+                dicNotes.put(note.index, note)
+                Log.d("NoteManager", note.toString());
             }
+
         }
     }
 
@@ -73,10 +82,31 @@ public class NoteManager {
         }
     }
 
+    public fun getNotes(): MutableList<Note> {
+
+        return dicNotes.values.filter { note -> !note.hidden }
+            .toMutableList()
+    }
+
+    public fun deleteAll() {
+//        dicNotes.values.clear()
+        for (note in dicNotes.values) {
+            note.hidden = true
+        }
+    }
+
+
+    fun getNote(idx: Int): Note {
+        return dicNotes.get(idx)!!
+    }
 }
 
 // 定义实体类
-
-data class Note(val title: String, val content: String) {
+public data class Note(
+    var title: String,
+    var content: String,
+    var index: Int = 0,
+    var hidden: Boolean = false
+) {
     constructor(content: String) : this("Default Title", content)
 }

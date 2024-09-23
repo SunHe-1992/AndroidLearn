@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Assignment1</string>
     <string name="title_activity_create_note">CreateNoteActivity</string>
+    <string name="title_activity_edit_note">EditNoteActivity</string>
 </resources>

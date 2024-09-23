@@ -26,15 +26,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.platform.LocalContext
 
-class CreateNoteActivity : ComponentActivity() {
+class EditNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val noteIndex = intent.getIntExtra("noteIndex", 0)
             Week3ProjectTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RefreshCreateNote(
-                        name = "create note",
+                    RefreshEditNote(
+                        noteIndex,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -45,10 +46,12 @@ class CreateNoteActivity : ComponentActivity() {
 
 
 @Composable
-fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
+fun RefreshEditNote(idx: Int, modifier: Modifier = Modifier) {
+
+    var curNote = NoteManager.getInstance().getNote(idx)
     val context = LocalContext.current
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(curNote.title) }
+    var content by remember { mutableStateOf(curNote.content) }
 
     Column(
         modifier = Modifier
@@ -58,7 +61,7 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "Create Note",
+            text = "Edit Note",
             modifier = modifier
         )
         OutlinedTextField(
@@ -90,13 +93,16 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
             if (title == "" || content == "") {
                 tip = "Title or content is empty";
             } else {
+                curNote.title = title
+                curNote.content = content
                 val noteInst = NoteManager.getInstance()
-                noteInst.SaveNote(context, title, content);
+                noteInst.EditNote(context, title, content, idx);
 
             }
             if (tip != "") {
                 Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
-            } else {//  Navigate back to the main screen
+            } else {
+                //  Navigate back to the main screen
                 val intent = Intent(context, MainActivity::class.java)
                 context.startActivity(intent)
             }
@@ -112,7 +118,14 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
         }) {
             Text(text = "Discard and back")
         }
-
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            NoteManager.getInstance().DeleteNote(context, idx)
+            //  Navigate back to the main screen
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }) {
+            Text(text = "Delete and back")
+        }
     }
 }
- 
