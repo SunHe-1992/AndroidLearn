@@ -41,11 +41,6 @@ class MainActivity : ComponentActivity() {
             HomeScreenDisplay()
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        NoteManager.getInstance().SaveToFile(this)
-    }
 }
 
 @Composable
