@@ -33,23 +33,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
+
+
+    fun readDataFromNotes() {
+
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         NoteManager.getInstance().LoadFromFile(this)
+        readDataFromNotes()
         enableEdgeToEdge()
         setContent {
             HomeScreenDisplay()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("note", "onResume")
+        readDataFromNotes()
+
+    }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "1233 $name!",
-        modifier = modifier
-    )
-}
 
 @Composable
 fun HomeScreenDisplay() {
@@ -60,15 +68,6 @@ fun HomeScreenDisplay() {
         mutableStateOf("")
     }
 
-//        FloatingActionButton(onClick = {
-//            //navigate
-//            val intent = Intent(context, SecondActivity::class.java)
-//            intent.putExtra("counter", counter.value)
-//            intent.putExtra("user name", nameInput.value)
-//            context.startActivity(intent)
-//        }) {
-//            Text(text = "NEXT")
-//        }
     val notesData =
         NoteManager.getInstance().getNotes() // Replace with your actual note retrieval logic
     var notes by remember { mutableStateOf(mutableListOf<Note>()) }

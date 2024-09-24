@@ -2,6 +2,7 @@ package com.example.week3project
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,6 +37,7 @@ class EditNoteActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RefreshEditNote(
                         noteIndex,
+                        onFinish = { finish() }, // Pass the callback here
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -46,13 +48,12 @@ class EditNoteActivity : ComponentActivity() {
 
 
 @Composable
-fun RefreshEditNote(idx: Int, modifier: Modifier = Modifier) {
+fun RefreshEditNote(idx: Int, onFinish: () -> Unit, modifier: Modifier = Modifier) {
 
     var curNote = NoteManager.getInstance().getNote(idx)
     val context = LocalContext.current
     var title by remember { mutableStateOf(curNote.title) }
     var content by remember { mutableStateOf(curNote.content) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,9 +103,8 @@ fun RefreshEditNote(idx: Int, modifier: Modifier = Modifier) {
             if (tip != "") {
                 Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
             } else {
-                //  Navigate back to the main screen
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
+                // close this activity
+                onFinish()
             }
         }) {
             Text("Save and back")
@@ -113,8 +113,7 @@ fun RefreshEditNote(idx: Int, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             //  Navigate back to the main screen
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
+            onFinish()
         }) {
             Text(text = "Discard and back")
         }
@@ -122,10 +121,10 @@ fun RefreshEditNote(idx: Int, modifier: Modifier = Modifier) {
         Button(onClick = {
             NoteManager.getInstance().DeleteNote(context, idx)
             //  Navigate back to the main screen
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
+            onFinish()
         }) {
             Text(text = "Delete and back")
         }
     }
 }
+

@@ -35,6 +35,7 @@ class CreateNoteActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RefreshCreateNote(
                         name = "create note",
+                        onFinish = { finish() }, // Pass the callback here
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -45,7 +46,7 @@ class CreateNoteActivity : ComponentActivity() {
 
 
 @Composable
-fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
+fun RefreshCreateNote(name: String, onFinish: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -82,9 +83,7 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            // TODO: Save the note using title and content
-//                onSave()
-
+            //  Save the note using title and content
 //    Log.d("NoteManager", "Name: " + noteInst.name);
             var tip: String = ""
             if (title == "" || content == "") {
@@ -97,8 +96,7 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
             if (tip != "") {
                 Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
             } else {//  Navigate back to the main screen
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
+                onFinish()
             }
         }) {
             Text("Save and back")
@@ -107,8 +105,7 @@ fun RefreshCreateNote(name: String, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             //  Navigate back to the main screen
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
+            onFinish()
         }) {
             Text(text = "Discard and back")
         }
