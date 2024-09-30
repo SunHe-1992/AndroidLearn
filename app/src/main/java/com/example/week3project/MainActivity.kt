@@ -1,6 +1,7 @@
 package com.example.week3project
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +19,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,7 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreenDisplay() {
     val context = LocalContext.current
@@ -69,29 +75,45 @@ fun HomeScreenDisplay() {
     }
 
     val notesData =
-        NoteManager.getInstance().getNotes() // Replace with your actual note retrieval logic
+        NoteManager.getInstance().getNotes()
     var notes by remember { mutableStateOf(mutableListOf<Note>()) }
     notes.addAll(notesData)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(notes) { note ->
-                NoteCard(note, onNoteClick = {
-                    val intent = Intent(context, EditNoteActivity::class.java)
-                    intent.putExtra("noteIndex", note.index)
+    //write scafford example
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    val intent = Intent(context, CreateNoteActivity::class.java)
                     context.startActivity(intent)
-                    Log.d("note", "click index" + note.index)
                 })
+            {
+                Row() {
+                    Text(text = "Create Note")
+                    Icon(Icons.Default.Create, contentDescription = "Create Note")
+                }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+    ) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(notes) { note ->
+                    NoteCard(note, onNoteClick = {
+                        val intent = Intent(context, EditNoteActivity::class.java)
+                        intent.putExtra("noteIndex", note.index)
+                        context.startActivity(intent)
+                        Log.d("note", "click index" + note.index)
+                    })
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
 //        FloatingActionButton(onClick = {
 //            //navigate
 //            NoteManager.getInstance().deleteAll()
@@ -100,16 +122,13 @@ fun HomeScreenDisplay() {
 //        }) {
 //            Text(text = "Delete all notes")
 //        }
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        FloatingActionButton(onClick = {
-            //navigate
-            val intent = Intent(context, CreateNoteActivity::class.java)
-            context.startActivity(intent)
-        }) {
-            Text(text = "Create note")
+
         }
     }
+
+
 }
 
 @Composable
