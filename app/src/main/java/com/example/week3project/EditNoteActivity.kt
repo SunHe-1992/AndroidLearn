@@ -61,7 +61,7 @@ fun RefreshEditNote(idx: Int, onFinish: () -> Unit, modifier: Modifier = Modifie
             FloatingActionButton(onClick = {
 //    Log.d("NoteManager", "Name: " + noteInst.name);
                 var tip: String = ""
-                if (title == "" || content == "") {
+                if (title.trim() == "" || content.trim() == "") {
                     tip = "Title or content is empty";
                 } else {
                     curNote.title = title

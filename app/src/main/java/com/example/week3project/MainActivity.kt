@@ -114,7 +114,8 @@ fun HomeScreenDisplay() {
     ) { innerPadding ->
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(innerPadding)
         ) {
             items(noteState) { note ->
                 NoteCard(note, onNoteClick = {

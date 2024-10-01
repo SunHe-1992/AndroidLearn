@@ -67,7 +67,7 @@ fun RefreshCreateNote(
             FloatingActionButton(onClick = {
                 //  Save the note using title and content
                 var tip: String = ""
-                if (title == "" || content == "") {
+                if (title.trim() == "" || content.trim() == "") {
                     tip = "Title or content is empty";
                 } else {
                     val noteInst = NoteManager.getInstance()
