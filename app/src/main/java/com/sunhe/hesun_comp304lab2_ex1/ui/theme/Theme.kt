@@ -1,5 +1,6 @@
-package com.example.week3project.ui.theme
+package com.sunhe.hesun_comp304lab2_ex1.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun Week3ProjectTheme(
+fun Hesun_COMP304Lab2_Ex1Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

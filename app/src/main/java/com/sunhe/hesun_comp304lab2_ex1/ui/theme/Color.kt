@@ -1,4 +1,4 @@
-package com.example.week3project.ui.theme
+package com.sunhe.hesun_comp304lab2_ex1.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

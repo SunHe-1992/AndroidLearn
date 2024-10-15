@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Assignment1</string>
-    <string name="title_activity_create_note">CreateNoteActivity</string>
-    <string name="title_activity_edit_note">EditNoteActivity</string>
+    <string name="app_name">hesun_COMP304Lab2_Ex1</string>
+    <string name="title_activity_create_task">CreateTaskActivity</string>
+    <string name="title_activity_edit">EditActivity</string>
 </resources>

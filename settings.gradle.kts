@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Week3Project"
+rootProject.name = "hesun_COMP304Lab2_Ex1"
 include(":app")
+ 

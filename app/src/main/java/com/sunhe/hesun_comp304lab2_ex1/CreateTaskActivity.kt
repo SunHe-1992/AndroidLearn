@@ -1,4 +1,4 @@
-package com.example.week3project
+package com.sunhe.hesun_comp304lab2_ex1
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -30,16 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.week3project.ui.theme.Week3ProjectTheme
+import com.sunhe.hesun_comp304lab2_ex1.ui.theme.Hesun_COMP304Lab2_Ex1Theme
 
-class CreateNoteActivity : ComponentActivity() {
+class CreateTaskActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Week3ProjectTheme {
+            Hesun_COMP304Lab2_Ex1Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RefreshCreateNote(
+                    RefreshCreateTask(
 
                         onFinish = { finish() }, // Pass the callback here
                         modifier = Modifier.padding(innerPadding)
@@ -52,7 +52,7 @@ class CreateNoteActivity : ComponentActivity() {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RefreshCreateNote(
+fun RefreshCreateTask(
 
     onFinish: () -> Unit,
     modifier: Modifier = Modifier
@@ -65,13 +65,12 @@ fun RefreshCreateNote(
         floatingActionButton = {
 
             FloatingActionButton(onClick = {
-                //  Save the note using title and content
+                //  Save the task using title and content
                 var tip: String = ""
                 if (title.trim() == "" || content.trim() == "") {
                     tip = "Title or content is empty";
                 } else {
-                    val noteInst = NoteManager.getInstance()
-                    noteInst.SaveNote(context, title, content);
+                    //todo save data
 
                 }
                 if (tip != "") {
@@ -82,18 +81,10 @@ fun RefreshCreateNote(
                 }
             }) {
                 Row() {
-                    Text("Save Note")
-                    Icon(Icons.Default.Done, contentDescription = "Save Note")
+                    Text("Save Task")
+                    Icon(Icons.Default.Done, contentDescription = "Save Task")
                 }
             }
-//
-//
-//            Button(onClick = {
-//                //  Navigate back to the main screen
-//                onFinish()
-//            }) {
-//                Text(text = "Discard and back")
-//            }
         }
     ) { innerPadding ->
         Column(
@@ -104,7 +95,7 @@ fun RefreshCreateNote(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Create Note",
+                text = "Create Task",
                 modifier = modifier
             )
             OutlinedTextField(
@@ -131,4 +122,3 @@ fun RefreshCreateNote(
         }
     }
 }
- 

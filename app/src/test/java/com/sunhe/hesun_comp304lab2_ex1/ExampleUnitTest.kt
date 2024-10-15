@@ -1,4 +1,4 @@
-package com.example.week3project
+package com.sunhe.hesun_comp304lab2_ex1
 
 import org.junit.Test
 
