@@ -20,7 +20,8 @@ class TaskHSViewModel : ViewModel() {
 
     // Handle business logic
     fun showTask() {
-        if (_uiState.value == null || _uiState.value.count()==0) {
+        if (_uiState.value == null || _uiState.value.count() == 0) {
+            //for dev: show dummy data if no data
             val tasks = listOf(
                 TaskHS(1, "Task 1", "Content 1", false),
                 TaskHS(2, "Task 2", "Content 2", true),
@@ -30,6 +31,10 @@ class TaskHSViewModel : ViewModel() {
             )
             _uiState.value = tasks
         }
+    }
+
+    fun getNextId(): Int {
+        return _uiState.value.count() + 1
     }
 
     fun updateTaskDone(taskId: Int, isDone: Boolean) {
@@ -60,6 +65,12 @@ class TaskHSViewModel : ViewModel() {
                     task
                 }
             }
+        }
+    }
+
+    fun createTask(newTitle: String, newContent: String) {
+        _uiState.update { currentList ->
+            currentList + TaskHS(getNextId(), newTitle, newContent, false)
         }
     }
 }

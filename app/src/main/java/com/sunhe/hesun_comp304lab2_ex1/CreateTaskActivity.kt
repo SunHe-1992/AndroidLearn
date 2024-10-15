@@ -30,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.sunhe.hesun_comp304lab2_ex1.data.DataManager
+import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
 import com.sunhe.hesun_comp304lab2_ex1.ui.theme.Hesun_COMP304Lab2_Ex1Theme
 
 class CreateTaskActivity : ComponentActivity() {
@@ -53,14 +55,13 @@ class CreateTaskActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RefreshCreateTask(
-
     onFinish: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-
+    val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
     Scaffold(
         floatingActionButton = {
 
@@ -70,13 +71,13 @@ fun RefreshCreateTask(
                 if (title.trim() == "" || content.trim() == "") {
                     tip = "Title or content is empty";
                 } else {
-                    //todo save data
-
+                    //save data
+                    viewModel.createTask(title, content)
+                    onFinish()
                 }
                 if (tip != "") {
                     Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
                 } else {//  Navigate back to the main screen
-
                     onFinish()
                 }
             }) {
