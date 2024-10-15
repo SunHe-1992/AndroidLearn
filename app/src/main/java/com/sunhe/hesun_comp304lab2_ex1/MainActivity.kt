@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.sunhe.hesun_comp304lab2_ex1.data.DataManager
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
 import com.sunhe.hesun_comp304lab2_ex1.ui.theme.Hesun_COMP304Lab2_Ex1Theme
 import kotlinx.coroutines.launch
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel: TaskHSViewModel by viewModels()
+//        val viewModel: TaskHSViewModel by viewModels()
+        val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {

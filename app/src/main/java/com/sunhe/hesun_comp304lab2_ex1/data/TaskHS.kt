@@ -20,14 +20,16 @@ class TaskHSViewModel : ViewModel() {
 
     // Handle business logic
     fun showTask() {
-        val tasks = listOf(
-            TaskHS(1, "Task 1", "Content 1", false),
-            TaskHS(2, "Task 2", "Content 2", true),
-            TaskHS(3, "Task 3", "Content 3", false),
-            TaskHS(4, "Task 4", "Content 4", true),
-            TaskHS(5, "Task 5", "Content 5", false)
-        )
-        _uiState.value = tasks
+        if (_uiState.value == null || _uiState.value.count()==0) {
+            val tasks = listOf(
+                TaskHS(1, "Task 1", "Content 1", false),
+                TaskHS(2, "Task 2", "Content 2", true),
+                TaskHS(3, "Task 3", "Content 3", false),
+                TaskHS(4, "Task 4", "Content 4", true),
+                TaskHS(5, "Task 5", "Content 5", false)
+            )
+            _uiState.value = tasks
+        }
     }
 
     fun updateTaskDone(taskId: Int, isDone: Boolean) {
@@ -35,8 +37,25 @@ class TaskHSViewModel : ViewModel() {
         _uiState.update { currentList ->
             currentList.map { task ->
                 if (task.id == taskId) {
-                    Log.d("TaskHSViewModel", "Task with ID $taskId updated to done: $isDone")
                     task.copy(done = isDone)
+                } else {
+                    task
+                }
+            }
+        }
+    }
+
+    fun getTask(taskId: Int): TaskHS? {
+        val cnt = _uiState.value.count()
+        Log.d("TaskHSViewModel", "getTask count: $cnt")
+        return _uiState.value.find { it.id == taskId }
+    }
+
+    fun updateTask(taskId: Int, newTitle: String, newContent: String) {
+        _uiState.update { currentList ->
+            currentList.map { task ->
+                if (task.id == taskId) {
+                    task.copy(title = newTitle, content = newContent)
                 } else {
                     task
                 }

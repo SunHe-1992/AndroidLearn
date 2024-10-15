@@ -22,12 +22,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.sunhe.hesun_comp304lab2_ex1.EditActivity
+import com.sunhe.hesun_comp304lab2_ex1.data.DataManager
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHS
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
 
 @Composable
 fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
+    val context = LocalContext.current
     viewModel.showTask()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -42,15 +46,13 @@ fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TaskCard(
-                    task, onNoteClick = {
-//                    val intent = Intent(context, EditNoteActivity::class.java)
-//                    intent.putExtra("noteIndex", note.index)
-//                    context.startActivity(intent)
-                        Log.d("task", "click id" + task.id)
-                        Log.d("task", "is done" + task.done)
-
+                    task,
+                    onNoteClick = {
+                        val intent = Intent(context, EditActivity::class.java)
+                        intent.putExtra("taskId", task.id)
+                        context.startActivity(intent)
+//                        Log.d("task", "click id" + task.id)
                     },
-                    viewModel
                 )
 
             }
@@ -59,8 +61,12 @@ fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
 }
 
 @Composable
-fun TaskCard(task: TaskHS, onNoteClick: (TaskHS) -> Unit, viewModel: TaskHSViewModel) {
-    var isChecked by remember { mutableStateOf(task.done) }
+fun TaskCard(_task: TaskHS, onNoteClick: (TaskHS) -> Unit) {
+    val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
+    val task = viewModel.getTask(_task.id)
+    if (task == null) return
+    var checkedState by remember { mutableStateOf(task.done) }
+    checkedState = task.done
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,12 +75,10 @@ fun TaskCard(task: TaskHS, onNoteClick: (TaskHS) -> Unit, viewModel: TaskHSViewM
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Checkbox(
-                checked = isChecked,
+                checked = checkedState,
                 onCheckedChange = {
-                    isChecked = it
                     viewModel.updateTaskDone(task.id, it)
-
-                    Log.d("task", "is done" + task.done)
+                    checkedState = it
                 }
             )
             Text(task.title, style = MaterialTheme.typography.headlineSmall)

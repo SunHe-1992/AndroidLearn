@@ -50,7 +50,8 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.activity:activity-ktx:1.8.2") // Or latest version
+    implementation("androidx.fragment:fragment-ktx:1.6.2") // Or latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
