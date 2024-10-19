@@ -2,10 +2,13 @@ package com.sunhe.hesun_comp304lab2_ex1.views
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.media.MediaPlayer
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.sunhe.hesun_comp304lab2_ex1.EditActivity
+import com.sunhe.hesun_comp304lab2_ex1.R
 import com.sunhe.hesun_comp304lab2_ex1.data.DataManager
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHS
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
@@ -43,7 +47,7 @@ fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 TaskCard(
                     context,
@@ -80,10 +84,34 @@ fun TaskCard(context: Context, _task: TaskHS, onNoteClick: (TaskHS) -> Unit) {
                 onCheckedChange = {
                     viewModel.updateTaskDone(context, task.id, it)
                     checkedState = it
+                    doButtonEffect(context)
                 }
             )
             Text(task.title, style = MaterialTheme.typography.headlineSmall)
 //            Text("Done: ${task.done}")
         }
     }
+}
+@Suppress("DEPRECATION")
+private fun doButtonEffect(context: Context) {
+    // Get the Vibrator service
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val vibratorManager =
+            context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        vibratorManager.defaultVibrator
+    } else {
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    }
+    // Vibrate the device
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+    } else {
+        @Suppress("DEPRECATION")
+        vibrator.vibrate(50)
+    }
+
+    //play sound
+    val mediaPlayer = MediaPlayer.create(context, R.raw.sound_task)
+    mediaPlayer.start()
+
 }
