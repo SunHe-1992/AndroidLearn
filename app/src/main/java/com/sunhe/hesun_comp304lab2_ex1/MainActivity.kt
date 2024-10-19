@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val viewModel: TaskHSViewModel by viewModels()
+        DataManager.getInstance().LoadFromFile(this)
         val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

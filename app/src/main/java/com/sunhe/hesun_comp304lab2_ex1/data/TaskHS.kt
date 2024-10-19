@@ -1,5 +1,6 @@
 package com.sunhe.hesun_comp304lab2_ex1.data
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +19,12 @@ class TaskHSViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<List<TaskHS>>(emptyList())
     val uiState: StateFlow<List<TaskHS>> = _uiState.asStateFlow()
 
+
     // Handle business logic
     fun showTask() {
         if (_uiState.value == null || _uiState.value.count() == 0) {
             //for dev: show dummy data if no data
+
             val tasks = listOf(
                 TaskHS(1, "Task 1", "Content 1", false),
                 TaskHS(2, "Task 2", "Content 2", true),
@@ -37,7 +40,7 @@ class TaskHSViewModel : ViewModel() {
         return _uiState.value.count() + 1
     }
 
-    fun updateTaskDone(taskId: Int, isDone: Boolean) {
+    fun updateTaskDone(context: Context, taskId: Int, isDone: Boolean) {
 
         _uiState.update { currentList ->
             currentList.map { task ->
@@ -48,6 +51,8 @@ class TaskHSViewModel : ViewModel() {
                 }
             }
         }
+        //save to file
+        DataManager.getInstance().SaveToFile(context)
     }
 
     fun getTask(taskId: Int): TaskHS? {
@@ -56,7 +61,7 @@ class TaskHSViewModel : ViewModel() {
         return _uiState.value.find { it.id == taskId }
     }
 
-    fun updateTask(taskId: Int, newTitle: String, newContent: String) {
+    fun updateTask(context: Context, taskId: Int, newTitle: String, newContent: String) {
         _uiState.update { currentList ->
             currentList.map { task ->
                 if (task.id == taskId) {
@@ -66,11 +71,25 @@ class TaskHSViewModel : ViewModel() {
                 }
             }
         }
+        //save to file
+        DataManager.getInstance().SaveToFile(context)
     }
 
-    fun createTask(newTitle: String, newContent: String) {
+    fun createTask(context: Context, newTitle: String, newContent: String) {
         _uiState.update { currentList ->
             currentList + TaskHS(getNextId(), newTitle, newContent, false)
         }
+        //save to file
+        DataManager.getInstance().SaveToFile(context)
+    }
+
+    fun getTaskList(): MutableList<TaskHS> {
+        return _uiState.value.toMutableList();
+    }
+
+    fun loadTaskList(array: Array<TaskHS>) {
+        //foreeach task save into _uiState.value
+        _uiState.value = array.toList()
+
     }
 }

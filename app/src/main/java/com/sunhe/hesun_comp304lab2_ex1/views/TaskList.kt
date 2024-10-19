@@ -1,6 +1,6 @@
 package com.sunhe.hesun_comp304lab2_ex1.views
 
-
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -32,7 +32,7 @@ import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
 @Composable
 fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
     val context = LocalContext.current
-    viewModel.showTask()
+//    viewModel.showTask()
     val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
@@ -46,6 +46,7 @@ fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TaskCard(
+                    context,
                     task,
                     onNoteClick = {
                         val intent = Intent(context, EditActivity::class.java)
@@ -61,7 +62,7 @@ fun TaskList(modifier: Modifier, viewModel: TaskHSViewModel) {
 }
 
 @Composable
-fun TaskCard(_task: TaskHS, onNoteClick: (TaskHS) -> Unit) {
+fun TaskCard(context: Context, _task: TaskHS, onNoteClick: (TaskHS) -> Unit) {
     val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
     val task = viewModel.getTask(_task.id)
     if (task == null) return
@@ -77,7 +78,7 @@ fun TaskCard(_task: TaskHS, onNoteClick: (TaskHS) -> Unit) {
             Checkbox(
                 checked = checkedState,
                 onCheckedChange = {
-                    viewModel.updateTaskDone(task.id, it)
+                    viewModel.updateTaskDone(context, task.id, it)
                     checkedState = it
                 }
             )

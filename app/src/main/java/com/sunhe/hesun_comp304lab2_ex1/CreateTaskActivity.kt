@@ -16,11 +16,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +56,7 @@ class CreateTaskActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RefreshCreateTask(
@@ -63,6 +68,17 @@ fun RefreshCreateTask(
     var content by remember { mutableStateOf("") }
     val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
     Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text("Create Task")
+                }
+            )
+        },
         floatingActionButton = {
 
             FloatingActionButton(onClick = {
@@ -72,7 +88,7 @@ fun RefreshCreateTask(
                     tip = "Title or content is empty";
                 } else {
                     //save data
-                    viewModel.createTask(title, content)
+                    viewModel.createTask(context, title, content)
                     onFinish()
                 }
                 if (tip != "") {

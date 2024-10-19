@@ -18,11 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +61,7 @@ class EditActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RefreshEditTask(
@@ -75,6 +80,17 @@ fun RefreshEditTask(
     var content by remember { mutableStateOf(task.content) }
     var checkedState by remember { mutableStateOf(task.done) }
     Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text("Edit Task")
+                }
+            )
+        },
         floatingActionButton = {
 
             FloatingActionButton(onClick = {
@@ -84,7 +100,7 @@ fun RefreshEditTask(
                     tip = "Title or content is empty";
                 } else {
                     //save data
-                    viewModel.updateTask(taskId, title, content)
+                    viewModel.updateTask(context, taskId, title, content)
                 }
                 if (tip != "") {
                     Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
@@ -115,7 +131,7 @@ fun RefreshEditTask(
                 Checkbox(
                     checked = checkedState,
                     onCheckedChange = {
-                        viewModel.updateTaskDone(task.id, it)
+                        viewModel.updateTaskDone(context, task.id, it)
                         checkedState = it
                     }
                 )
