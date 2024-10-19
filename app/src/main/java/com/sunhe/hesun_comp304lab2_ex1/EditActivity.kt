@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
@@ -50,19 +51,19 @@ import com.sunhe.hesun_comp304lab2_ex1.data.DataManager
 import com.sunhe.hesun_comp304lab2_ex1.data.TaskHSViewModel
 import com.sunhe.hesun_comp304lab2_ex1.ui.theme.Hesun_COMP304Lab2_Ex1Theme
 
-
+// Activity for editing tasks
 class EditActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val taskId = intent.getIntExtra("taskId", 0)
-        enableEdgeToEdge()
+        super.onCreate(savedInstanceState) // Call the superclass's onCreate method
+        val taskId = intent.getIntExtra("taskId", 0) // Retrieve the task ID from the intent
+        enableEdgeToEdge() // Enable edge-to-edge layout for the activity
         setContent {
-            Hesun_COMP304Lab2_Ex1Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Hesun_COMP304Lab2_Ex1Theme { // Apply the app's theme
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> // Set up the Scaffold layout
                     RefreshEditTask(
-                        taskId,
-                        onFinish = { finish() }, // Pass the callback here
-                        modifier = Modifier.padding(innerPadding)
+                        taskId, // Pass the task ID to the composable
+                        onFinish = { finish() }, // Pass the callback to finish the activity
+                        modifier = Modifier.padding(innerPadding) // Apply padding to the inner content
                     )
                 }
             }
@@ -70,143 +71,149 @@ class EditActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class) // Opt-in to experimental Material 3 APIs
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter") // Suppress warning for unused padding parameter
 @Composable
 fun RefreshEditTask(
-    taskId: Int,
-    onFinish: () -> Unit,
-    modifier: Modifier = Modifier
+    taskId: Int, // The ID of the task being edited
+    onFinish: () -> Unit, // Callback to finish the activity
+    modifier: Modifier = Modifier // Modifier for layout customization
 ) {
+    // Get the ViewModel from DataManager
     val viewModel: TaskHSViewModel = DataManager.getInstance().getVM()
+    // Retrieve the task from the ViewModel using the provided task ID
     val task = viewModel.getTask(taskId)
+
+    // Log an error if the task is null
     if (task == null) {
         Log.d("EditActivity", "task is null id = $taskId")
-        return
+        return // Exit if no task is found
     }
-    val context = LocalContext.current
+
+    val context = LocalContext.current // Get the current context
+    // State variables for title, content, and checkbox state
     var title by remember { mutableStateOf(task.title) }
     var content by remember { mutableStateOf(task.content) }
     var checkedState by remember { mutableStateOf(task.done) }
+
+    // Apply the app's theme for the UI
     Hesun_COMP304Lab2_Ex1Theme {
         Scaffold(
+            modifier = Modifier.safeDrawingPadding(), // Fill the inner padding of the available size
             topBar = {
-                TopAppBar(
+                TopAppBar( // Create a top app bar
                     colors = topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer, // Background color
+                        titleContentColor = MaterialTheme.colorScheme.primary, // Title text color
                     ),
                     title = {
-                        Text("Edit Task")
+                        Text("Edit Task") // Title of the app bar
                     },
-                    navigationIcon = {
-                        IconButton(onClick = onFinish) {
+                    navigationIcon = { // Back button in the app bar
+                        IconButton(onClick = onFinish) { // Callback to finish the activity
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = "Back" // Content description for accessibility
                             )
                         }
                     }
                 )
             },
-            floatingActionButton = {
-
+            floatingActionButton = { // Floating action button for saving the task
                 FloatingActionButton(
                     modifier = Modifier.semantics {
-                        contentDescription = "Edit Task Button"
+                        contentDescription =
+                            "Edit Task Button" // Content description for accessibility
                     },
-
                     onClick = {
-                        //  Save the task using title and content
+                        // Validate title and content before saving
                         var tip: String = ""
                         if (title.trim() == "" || content.trim() == "") {
-                            tip = "Title or content is empty";
+                            tip = "Title or content is empty" // Error message if validation fails
                         } else {
-                            //save data
+                            // Save the updated task
                             viewModel.updateTask(context, taskId, title, content)
                         }
+                        // Show toast message for validation feedback
                         if (tip != "") {
                             Toast.makeText(context, tip, Toast.LENGTH_SHORT).show()
-                        } else {//  Navigate back to the main screen
+                        } else {
+                            // Navigate back to the previous screen
                             onFinish()
                         }
-
                     }) {
+                    // Content of the floating action button
                     Row() {
-                        Text("Save Task")
-                        Icon(Icons.Default.Done, contentDescription = "Save Task")
+                        Text("Save Task") // Button text
+                        Icon(Icons.Default.Done, contentDescription = "Save Task") // Save icon
                     }
                 }
             }
-        ) { innerPadding ->
+        ) { innerPadding -> // Padding for the inner content
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .safeDrawingPadding()
+                    .padding(innerPadding)
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
+                horizontalAlignment = Alignment.CenterHorizontally, // Center contents horizontally
+                verticalArrangement = Arrangement.Top // Align contents to the top
             ) {
-
-                Text(
-                    text = "Edit Task",
-                    modifier = modifier
-                )
-                Row() {
+                Row() { // Row for checkbox and title input
                     Checkbox(
-                        checked = checkedState,
+                        checked = checkedState, // Checkbox state
                         onCheckedChange = {
+                            // Update task's completion state
                             viewModel.updateTaskDone(context, task.id, it)
-                            checkedState = it
-                            doButtonEffect(context)
+                            checkedState = it // Update local checkbox state
+                            doButtonEffect(context) // Trigger button effect (vibration/sound)
                         }
                     )
                     OutlinedTextField(
-                        value = title,
+                        value = title, // Current value of the title input
                         onValueChange = {
-                            title = it
+                            title = it // Update title state when user types
                         },
-                        label = { Text("Title") },
-                        modifier = Modifier.fillMaxWidth()
+                        label = { Text("Title") }, // Label for the input field
+                        modifier = Modifier.safeDrawingPadding() // Make input field fill width
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp)) // Space between inputs
                 OutlinedTextField(
-                    value = content,
+                    value = content, // Current value of the content input
                     onValueChange = {
-                        content = it
+                        content = it // Update content state when user types
                     },
-                    label = { Text("Content") },
+                    label = { Text("Content") }, // Label for the input field
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
+                        .safeDrawingPadding() // Make input field fill width
+                        .height(200.dp) // Set fixed height for content input
                 )
-
-
             }
         }
     }
 }
 
-@Suppress("DEPRECATION")
+// Function to handle button effects like vibration and sound
+@Suppress("DEPRECATION") // Suppress warnings for deprecated API usage
 private fun doButtonEffect(context: Context) {
-    // Get the Vibrator service
+    // Get the Vibrator service for haptic feedback
     val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val vibratorManager =
             context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        vibratorManager.defaultVibrator
+        vibratorManager.defaultVibrator // Use the new VibratorManager for API 31+
     } else {
-        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator // Fallback for older versions
     }
-    // Vibrate the device
+
+    // Vibrate the device for a short duration
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
     } else {
-        @Suppress("DEPRECATION")
-        vibrator.vibrate(50)
+        @Suppress("DEPRECATION") // Suppress deprecation warning for older API
+        vibrator.vibrate(50) // Fallback for pre-Oreo devices
     }
 
-    //play sound
-    val mediaPlayer = MediaPlayer.create(context, R.raw.sound_task)
-    mediaPlayer.start()
-
+    // Play a sound effect when the button is pressed
+    val mediaPlayer = MediaPlayer.create(context, R.raw.sound_task) // Create MediaPlayer instance
+    mediaPlayer.start() // Start playback
 }
