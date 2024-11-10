@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "hesun_COMP304Lab2_Ex1"
+rootProject.name = "hesun_COMP304Lab3_Ex1"
 include(":app")
- 

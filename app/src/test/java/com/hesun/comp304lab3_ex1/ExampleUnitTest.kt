@@ -1,8 +1,7 @@
-package com.sunhe.hesun_comp304lab2_ex1
-
-import org.junit.Test
+package com.hesun.comp304lab3_ex1
 
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Example local unit test, which will execute on the development machine (host).
