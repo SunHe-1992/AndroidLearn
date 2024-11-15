@@ -7,10 +7,15 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 
 sealed class NavItem {
-    object Search : Item("search", "Search", Icons.Default.Search)
-    object Call : Item("call", "Call", Icons.Default.Call)
-    object Favorite : Item("favorite", "Favorite", Icons.Default.Favorite)
-    object Email : Item("email", "Email", Icons.Default.Email)
+    object Screen1 : Item("screen1", "Screen1", Icons.Default.Search) {
 
+    }
+
+    object Screen2 : Item("screen2", "Screen2", Icons.Default.Email) {
+        // Screen2 ===> Screen2/{value}
+//        fun createRoute(valueToPass: String): String {
+//            return "Screen2/$valueToPass"
+//        }
+    }
 }
 
