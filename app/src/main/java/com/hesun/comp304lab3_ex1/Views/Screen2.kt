@@ -15,9 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 
 @Composable
-fun Screen2(navController: NavController, valueFromScreen1: String){
+fun Screen2(navController: NavController,myViewModel: citiesViewModel, valueFromScreen1: String){
 
     var year by remember { mutableStateOf("") }
     Column(modifier = Modifier.fillMaxWidth().padding(top = 100.dp),

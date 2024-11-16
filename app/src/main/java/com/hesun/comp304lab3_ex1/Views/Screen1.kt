@@ -1,6 +1,7 @@
 package com.hesun.comp304lab3_ex1.Views
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,14 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.hesun.comp304lab3_ex1.Navigation.NavItem
+import com.hesun.comp304lab3_ex1.RoomDB.City
+import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 
 
 @Composable
-fun Screen1(navController: NavController, year: String?){
+fun Screen1(navController: NavController, myViewModel: citiesViewModel, year: String?) {
 
     var value by remember { mutableStateOf("") }
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 100.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Screen 1 ")
@@ -34,13 +39,30 @@ fun Screen1(navController: NavController, year: String?){
         OutlinedTextField(
             value = value,
             onValueChange = { value = it },
-            label = { Text("Value to screen 2") },
+            label = { Text("Save this content") },
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = {
-//            navController.navigate(NavItem.Screen2.createRoute(value))// Screen2/value
 
-        }) { Text("Go to Screen 2") }
+        Button(onClick = {
+            myViewModel.insertToDB(City(Math.random().toInt(), value.trim()))
+        }) { Text("save to db") }
+
+        Button(onClick = {
+            myViewModel.deleteOneCity(City(Math.random().toInt(), value.trim()))
+        }) { Text("delete from db") }
+
+        Button(onClick = {
+            myViewModel.deleteAllCities()
+        }) { Text("delete all cities") }
+
+        Button(onClick = {
+            var cityList = myViewModel.getDBCities()
+            //log citiList
+            cityList.forEach {
+                Log.d("city", it.toString())
+            }
+
+        }) { Text("read db") }
     }
 
 }

@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.hesun.comp304lab3_ex1.Model.Product
-import com.hesun.comp304lab3_ex1.Model.ProductRepo
 import com.hesun.comp304lab3_ex1.Navigation.MyNavGraph
-import com.hesun.comp304lab3_ex1.ViewModel.ProductViewModel
-import com.hesun.comp304lab3_ex1.ViewModel.ProductViewModelFactory
+import com.hesun.comp304lab3_ex1.RoomDB.CityDataBase
+import com.hesun.comp304lab3_ex1.ViewModel.AppRepository
+import com.hesun.comp304lab3_ex1.ViewModel.ViewModelFactory
+import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 import com.hesun.comp304lab3_ex1.Views.MyBottomBar
 import com.hesun.comp304lab3_ex1.Views.MyFavButton
 import com.hesun.comp304lab3_ex1.Views.MyTopBar
@@ -29,23 +29,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-
-        var prepo = ProductRepo()
-        var pfactory = ProductViewModelFactory(prepo)
-        var myProductViewModel = ViewModelProvider(this, pfactory)[ProductViewModel::class.java]
-
-        var mainlist = myProductViewModel.getListOfProducts()
-
+        //create db and vm
+        val database = CityDataBase.getInstance(applicationContext)
+        val repository = AppRepository(database.getCityDao())
+        val myviewModelFactory = ViewModelFactory(repository)
+        val myViewModel = ViewModelProvider(this, myviewModelFactory)[citiesViewModel::class.java]
         setContent {
             Hesun_COMP304Lab3_Ex1Theme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-
-                MyFirstScaffold(mainlist)
+                MyFirstScaffold(myViewModel)
             }
         }
     }
@@ -61,10 +52,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MyFirstScaffold(list: ArrayList<Product>) {
+fun MyFirstScaffold(myViewModel: citiesViewModel) {
     val navController = rememberNavController()
     Scaffold(
-        modifier =  Modifier.safeDrawingPadding(),
+        modifier = Modifier.safeDrawingPadding(),
 
         bottomBar = { MyBottomBar(navController) },
         topBar = { MyTopBar() },
@@ -74,7 +65,7 @@ fun MyFirstScaffold(list: ArrayList<Product>) {
 
             innerPadding ->
         Column {
-            MyNavGraph(navController = navController)
+            MyNavGraph(navController = navController, myViewModel)
         }
     }
 }
