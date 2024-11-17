@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hesun.comp304lab3_ex1.RoomDB.City
-
 import kotlinx.coroutines.launch
 
 class citiesViewModel(private val repository: AppRepository) : ViewModel() {
@@ -15,6 +14,7 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
     var cityName by mutableStateOf("Beijing, BJ, China")
     var cities by mutableStateOf<List<String>>(emptyList())
         private set
+    var naviIndex by mutableStateOf(0)
 
 
     var dbcities by mutableStateOf<List<City>>(emptyList())
@@ -71,12 +71,24 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
     }
 
     fun deleteOneCity(name: String) {
+        var needReset = false
+        if (name == cityName) {
+            needReset = true
+        }
         viewModelScope.launch {
             repository.deleteCity(name)
             val dbfetchCities = repository.getCitiesFromDB()
             dbcities = dbfetchCities
+            if (needReset) {
+                if (dbcities.count() > 0)
+                    cityName = dbcities.first().cityName
+                else
+                    cityName = "Beijing, BJ, China"
+            }
+
         }
     }
+
 
     fun deleteAllCities() {
         viewModelScope.launch {

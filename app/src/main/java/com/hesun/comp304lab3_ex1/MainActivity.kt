@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +20,6 @@ import com.hesun.comp304lab3_ex1.ViewModel.WeatherViewModel
 import com.hesun.comp304lab3_ex1.ViewModel.WeatherViewModelFactory
 import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 import com.hesun.comp304lab3_ex1.Views.MyBottomBar
-import com.hesun.comp304lab3_ex1.Views.MyFavButton
 import com.hesun.comp304lab3_ex1.Views.MyTopBar
 import com.hesun.comp304lab3_ex1.ui.theme.Hesun_COMP304Lab3_Ex1Theme
 
@@ -51,15 +49,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyFirstScaffold(cityVM: citiesViewModel, weatherVM: WeatherViewModel) {
     val navController = rememberNavController()
+
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
-        bottomBar = { MyBottomBar(navController) },
-        topBar = { MyTopBar() },
-        floatingActionButton = { MyFavButton() },
-        floatingActionButtonPosition = FabPosition.Center
-    ) {
-            innerPadding ->
+        bottomBar = { MyBottomBar(navController, cityVM) },
+        topBar = { MyTopBar() }
+
+//        floatingActionButton = { MyFavButton() },
+//        floatingActionButtonPosition = FabPosition.Center
+    ) { innerPadding ->
         Column {
+
             MyNavGraph(innerPadding, navController = navController, cityVM, weatherVM)
         }
 

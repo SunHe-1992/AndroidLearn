@@ -30,7 +30,7 @@ fun ScreenSavedCities(
     cityVM: citiesViewModel
 
 ) {
-
+    cityVM.naviIndex = 2
     Hesun_COMP304Lab3_Ex1Theme {
         if (cityVM.dbcities.size == 0) {
             //show no cities saved
@@ -50,9 +50,12 @@ fun ScreenSavedCities(
                 val item = cityVM.dbcities.get(index)
                 SavedCityRenderer(item.cityName, index, onDeleteClick = {
                     cityVM.deleteOneCity(item.cityName)
+
                 }, onConfirmClick = {
                     cityVM.cityName = item.cityName
-                    navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName))
+                    navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName)) {
+                        launchSingleTop = true
+                    }
                 }
                 )
             }

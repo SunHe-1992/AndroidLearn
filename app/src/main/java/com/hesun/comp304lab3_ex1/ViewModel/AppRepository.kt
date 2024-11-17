@@ -16,7 +16,6 @@ class AppRepository(private val cityDao: CityDAO) {
     }
 
     suspend fun getWeather(city: String): WeatherObject? {
-        //old key "071c3ffca10be01d334505630d2c1a9c"
         return weatherApiService.getWeather(city, "d12c846d30c2d560601ec94bea759617", "metric")
     }
 

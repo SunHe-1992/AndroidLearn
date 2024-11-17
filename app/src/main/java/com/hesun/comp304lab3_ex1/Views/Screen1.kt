@@ -46,10 +46,11 @@ fun Screen1(
     cityVM: citiesViewModel
 ) {
 
+    cityVM.naviIndex = 0
     var searchText by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableStateOf(-1) }
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    var isDebug = false
     Hesun_COMP304Lab3_Ex1Theme {
         Column(
             modifier = Modifier
@@ -118,31 +119,33 @@ fun Screen1(
 
                 }
             }
+            if (isDebug) {
+                Button(onClick = {
+                    cityVM.insertToDB(City(Math.random().toInt(), searchText.trim()))
+                }) { Text("save to db") }
 
-            Button(onClick = {
-                cityVM.insertToDB(City(Math.random().toInt(), searchText.trim()))
-            }) { Text("save to db") }
+                Button(onClick = {
+                    cityVM.deleteOneCity(searchText.trim())
+                }) { Text("delete from db") }
 
-            Button(onClick = {
-                cityVM.deleteOneCity(searchText.trim())
-            }) { Text("delete from db") }
+                Button(onClick = {
+                    cityVM.deleteAllCities()
+                }) { Text("delete all cities") }
 
-            Button(onClick = {
-                cityVM.deleteAllCities()
-            }) { Text("delete all cities") }
+                Button(onClick = {
+                    var cityList = cityVM.getDBCities()
+                    //log citiList
+                    cityList.forEach {
+                        Log.d("city", it.toString())
+                    }
 
-            Button(onClick = {
-                var cityList = cityVM.getDBCities()
-                //log citiList
-                cityList.forEach {
-                    Log.d("city", it.toString())
-                }
-
-            }) { Text("read db") }
-
+                }) { Text("read db") }
+            }
             Button(onClick = {
                 cityVM.cityName = searchText.trim()
-                navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName))
+                navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName)) {
+                    launchSingleTop = true
+                }
                 cityVM.insertToDB(City(Math.random().toInt(), cityVM.cityName))
             }) { Text("show weather of this city") }
 

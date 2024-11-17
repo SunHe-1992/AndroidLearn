@@ -8,8 +8,6 @@ data class City(
     @androidx.room.ColumnInfo("city")
     var cityName: String
 
-
-
 ) {
 
 }

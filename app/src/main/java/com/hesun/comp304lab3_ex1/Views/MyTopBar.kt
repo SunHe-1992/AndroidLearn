@@ -21,13 +21,13 @@ import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopBar(){
+fun MyTopBar() {
     val showMenu = remember { mutableStateOf(false) }
     var cnx = LocalContext.current
     val nameInput = remember { mutableStateOf("") }
 
     TopAppBar(
-        title = { Text(text = "He Sun Weather") } ,
+        title = { Text(text = "He Sun Weather") },
         navigationIcon = {
             IconButton(onClick = {
                 Toast.makeText(cnx, "It is my First Menu", Toast.LENGTH_LONG).show()
@@ -43,7 +43,7 @@ fun MyTopBar(){
             }
             IconButton(onClick = {
                 var intent = Intent(Intent.ACTION_WEB_SEARCH).apply {
-                    putExtra(SearchManager.QUERY, "iphone 16" )
+                    putExtra(SearchManager.QUERY, "iphone 16")
                 }
                 cnx.startActivity(intent)
 
