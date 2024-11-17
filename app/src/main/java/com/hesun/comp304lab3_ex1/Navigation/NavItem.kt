@@ -17,6 +17,6 @@ sealed class NavItem(var route: String) {
     }
 
     // saved cities list
-    object Screen3 : Item("screen3", "Screen3", R.drawable.city)
+    object ScreenSavedCities : Item("ScreenSavedCities", "Cities", R.drawable.city)
 }
 

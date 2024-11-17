@@ -33,8 +33,8 @@ class AppRepository(private val cityDao: CityDAO) {
         }
     }
 
-    suspend fun deleteCity(c: City) {
-        cityDao.deleteCity(c)
+    suspend fun deleteCity(name: String) {
+        cityDao.deleteCityByName(name)
     }
 
     suspend fun searchForCityInDB(term: String): List<City> {

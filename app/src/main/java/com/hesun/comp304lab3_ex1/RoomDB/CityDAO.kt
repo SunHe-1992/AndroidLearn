@@ -32,4 +32,8 @@ interface CityDAO {
     // Get single city by exact name match
     @Query("SELECT * FROM City WHERE city = :cityName")
     suspend fun getCityByExactName(cityName: String): City?
+
+    // Delete a city by name
+    @Query("DELETE FROM City WHERE city = :cityName")
+    suspend fun deleteCityByName(cityName: String)
 }

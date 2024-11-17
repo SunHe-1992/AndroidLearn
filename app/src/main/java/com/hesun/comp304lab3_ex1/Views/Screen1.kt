@@ -124,7 +124,7 @@ fun Screen1(
             }) { Text("save to db") }
 
             Button(onClick = {
-                cityVM.deleteOneCity(City(Math.random().toInt(), searchText.trim()))
+                cityVM.deleteOneCity(searchText.trim())
             }) { Text("delete from db") }
 
             Button(onClick = {
@@ -141,8 +141,9 @@ fun Screen1(
             }) { Text("read db") }
 
             Button(onClick = {
-                cityVM.cityName = searchText
-                navController.navigate(NavItem.Screen2.createRoute(searchText))
+                cityVM.cityName = searchText.trim()
+                navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName))
+                cityVM.insertToDB(City(Math.random().toInt(), cityVM.cityName))
             }) { Text("show weather of this city") }
 
 
@@ -152,7 +153,7 @@ fun Screen1(
 
 
 @Composable
-fun CityRenderer(cityName: String, index: Int, onItemClick: (Int) -> Unit) {
+private fun CityRenderer(cityName: String, index: Int, onItemClick: (Int) -> Unit) {
     if (cityName.length < 4) {
         return
     }
@@ -192,7 +193,7 @@ fun CityRenderer(cityName: String, index: Int, onItemClick: (Int) -> Unit) {
 }
 
 //sample:input  "Beijing, BJ, China"  output ["Beijing", " BJ, China"]
-fun CityNameSplit(cityName: String): List<String> {
+private fun CityNameSplit(cityName: String): List<String> {
 
     var splitted = cityName.split(',')
     var name1 = splitted.first()

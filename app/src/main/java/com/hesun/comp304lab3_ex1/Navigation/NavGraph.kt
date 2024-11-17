@@ -11,6 +11,7 @@ import com.hesun.comp304lab3_ex1.ViewModel.WeatherViewModel
 import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 import com.hesun.comp304lab3_ex1.Views.Screen1
 import com.hesun.comp304lab3_ex1.Views.Screen2
+import com.hesun.comp304lab3_ex1.Views.ScreenSavedCities
 
 
 @Composable
@@ -46,5 +47,9 @@ fun MyNavGraph(
                 backStackEntery.arguments?.getString("value").toString()
             )
         }
+        composable(NavItem.ScreenSavedCities.path) {
+            ScreenSavedCities(innerPadding, navController, cityVM)
+        }
+
     }
 }

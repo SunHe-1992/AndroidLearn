@@ -70,9 +70,9 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun deleteOneCity(c: City) {
+    fun deleteOneCity(name: String) {
         viewModelScope.launch {
-            repository.deleteCity(c)
+            repository.deleteCity(name)
             val dbfetchCities = repository.getCitiesFromDB()
             dbcities = dbfetchCities
         }

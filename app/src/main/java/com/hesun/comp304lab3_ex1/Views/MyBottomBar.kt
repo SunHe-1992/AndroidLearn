@@ -19,7 +19,7 @@ import com.hesun.comp304lab3_ex1.Navigation.NavItem
 
 @Composable
 fun MyBottomBar(navController: NavController) {
-    val navItems = listOf(NavItem.Screen1, NavItem.Screen2)
+    val navItems = listOf(NavItem.Screen1, NavItem.Screen2, NavItem.ScreenSavedCities)
     var selectedItem by rememberSaveable {
         mutableStateOf(0)
     }
