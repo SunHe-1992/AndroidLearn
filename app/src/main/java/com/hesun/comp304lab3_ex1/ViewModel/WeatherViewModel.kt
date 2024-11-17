@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 
 class WeatherViewModel(private val repository: AppRepository) : ViewModel() {
 
-
     var weatherO by mutableStateOf<WeatherObject?>(null)
         private set
 

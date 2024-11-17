@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class citiesViewModel(private val repository: AppRepository) : ViewModel() {
 
+    var cityName by mutableStateOf("Beijing, BJ, China")
     var cities by mutableStateOf<List<String>>(emptyList())
         private set
 
@@ -37,8 +38,7 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
 //    }
 
 
-
-    fun getCities(userTerm: String) :List<String>{
+    fun getCities(userTerm: String): List<String> {
         viewModelScope.launch {
             val fetchCities = repository.getCities(userTerm)
             cities = fetchCities
@@ -46,7 +46,7 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         return cities
     }
 
-    fun getDBCities() :List<City>{
+    fun getDBCities(): List<City> {
         viewModelScope.launch {
             val dbfetchCities = repository.getCitiesFromDB()
             dbcities = dbfetchCities
@@ -54,7 +54,7 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         return dbcities
     }
 
-    fun insertToDB(c:City){
+    fun insertToDB(c: City) {
         viewModelScope.launch {
             repository.insertCity(c)
             val dbfetchCities = repository.getCitiesFromDB()
@@ -62,14 +62,15 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun update(newCity: City){
+    fun update(newCity: City) {
         viewModelScope.launch {
             repository.update(newCity)
             val dbfetchCities = repository.getCitiesFromDB()
             dbcities = dbfetchCities
         }
     }
-    fun deleteOneCity(c:City){
+
+    fun deleteOneCity(c: City) {
         viewModelScope.launch {
             repository.deleteCity(c)
             val dbfetchCities = repository.getCitiesFromDB()
@@ -77,7 +78,7 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun deleteAllCities(){
+    fun deleteAllCities() {
         viewModelScope.launch {
             repository.deleteAllCities()
             val dbfetchCities = repository.getCitiesFromDB()
@@ -85,20 +86,9 @@ class citiesViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    fun clearCities() {
+        cities = emptyList()
+    }
 
 
 }

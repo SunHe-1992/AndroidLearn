@@ -1,7 +1,8 @@
 package com.hesun.comp304lab3_ex1.Views
 
 
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -10,9 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hesun.comp304lab3_ex1.Navigation.NavItem
-
 
 @Composable
 fun MyBottomBar(navController: NavController) {
@@ -37,7 +40,13 @@ fun MyBottomBar(navController: NavController) {
                     }
                 },
                 icon = {
-                    Icon(imageVector = item.icon, contentDescription = item.title)
+                    Image(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        modifier = Modifier.size(30.dp)
+                    )
+
+
                 },
                 label = { Text(item.title) })
         }

@@ -1,19 +1,22 @@
 package com.hesun.comp304lab3_ex1.Navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Search
+import  com.hesun.comp304lab3_ex1.R
 
-sealed class NavItem {
-    object Screen1 : Item("screen1", "Screen1", Icons.Default.Search) {
+sealed class NavItem(var route: String) {
+
+    // search city
+    object Screen1 : Item("screen1", "Screen1", R.drawable.search) {
 
     }
 
-    object Screen2 : Item("screen2", "Screen2", Icons.Default.Email) {
-        // Screen2 ===> Screen2/{value}
-//        fun createRoute(valueToPass: String): String {
-//            return "Screen2/$valueToPass"
-//        }
+    //weather screen
+    object Screen2 : Item("screen2", "Screen2", R.drawable.weather_icon) {
+        fun createRoute(valueToPass: String): String {
+            return "Screen2/$valueToPass"
+        }
     }
+
+    // saved cities list
+    object Screen3 : Item("screen3", "Screen3", R.drawable.city)
 }
 

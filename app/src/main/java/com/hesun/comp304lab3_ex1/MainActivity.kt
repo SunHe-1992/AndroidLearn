@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +17,8 @@ import com.hesun.comp304lab3_ex1.Navigation.MyNavGraph
 import com.hesun.comp304lab3_ex1.RoomDB.CityDataBase
 import com.hesun.comp304lab3_ex1.ViewModel.AppRepository
 import com.hesun.comp304lab3_ex1.ViewModel.ViewModelFactory
+import com.hesun.comp304lab3_ex1.ViewModel.WeatherViewModel
+import com.hesun.comp304lab3_ex1.ViewModel.WeatherViewModelFactory
 import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 import com.hesun.comp304lab3_ex1.Views.MyBottomBar
 import com.hesun.comp304lab3_ex1.Views.MyFavButton
@@ -32,40 +33,35 @@ class MainActivity : ComponentActivity() {
         //create db and vm
         val database = CityDataBase.getInstance(applicationContext)
         val repository = AppRepository(database.getCityDao())
-        val myviewModelFactory = ViewModelFactory(repository)
-        val myViewModel = ViewModelProvider(this, myviewModelFactory)[citiesViewModel::class.java]
+        val cityVMFactory = ViewModelFactory(repository)
+        val cityVM = ViewModelProvider(this, cityVMFactory)[citiesViewModel::class.java]
+
+        val weatherVMFactory = WeatherViewModelFactory(repository)
+        val weatherVM = ViewModelProvider(this, weatherVMFactory)[WeatherViewModel::class.java]
         setContent {
             Hesun_COMP304Lab3_Ex1Theme {
-                MyFirstScaffold(myViewModel)
+                MyFirstScaffold(cityVM, weatherVM)
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MyFirstScaffold(myViewModel: citiesViewModel) {
+fun MyFirstScaffold(cityVM: citiesViewModel, weatherVM: WeatherViewModel) {
     val navController = rememberNavController()
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
-
         bottomBar = { MyBottomBar(navController) },
         topBar = { MyTopBar() },
         floatingActionButton = { MyFavButton() },
         floatingActionButtonPosition = FabPosition.Center
     ) {
-
             innerPadding ->
         Column {
-            MyNavGraph(navController = navController, myViewModel)
+            MyNavGraph(innerPadding, navController = navController, cityVM, weatherVM)
         }
+
     }
 }

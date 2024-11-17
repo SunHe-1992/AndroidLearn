@@ -27,7 +27,7 @@ fun MyTopBar(){
     val nameInput = remember { mutableStateOf("") }
 
     TopAppBar(
-        title = { Text(text = "My APP") } ,
+        title = { Text(text = "He Sun Weather") } ,
         navigationIcon = {
             IconButton(onClick = {
                 Toast.makeText(cnx, "It is my First Menu", Toast.LENGTH_LONG).show()
