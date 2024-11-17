@@ -28,96 +28,91 @@ fun ScreenSavedCities(
     innerPadding: PaddingValues,
     navController: NavController,
     cityVM: citiesViewModel
-
 ) {
     cityVM.naviIndex = 2
+
     Hesun_COMP304Lab3_Ex1Theme {
         if (cityVM.dbcities.size == 0) {
-            //show no cities saved
-
+            // Display a message if no cities are saved
             Text(text = "No cities saved", modifier = Modifier.padding(innerPadding))
-
-        }
-
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        )
-        {
-
-            items(cityVM.dbcities.size) { index ->
-                val item = cityVM.dbcities.get(index)
-                SavedCityRenderer(item.cityName, index, onDeleteClick = {
-                    cityVM.deleteOneCity(item.cityName)
-
-                }, onConfirmClick = {
-                    cityVM.cityName = item.cityName
-                    navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName)) {
-                        launchSingleTop = true
-                    }
+        } else {
+            // Display a list of saved cities
+            LazyColumn(
+                modifier = Modifier.padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(cityVM.dbcities.size) { index ->
+                    val item = cityVM.dbcities[index]
+                    SavedCityRenderer(
+                        item.cityName, index, onDeleteClick = {
+                            cityVM.deleteOneCity(item.cityName)
+                        },
+                        onConfirmClick = {
+                            cityVM.cityName = item.cityName
+                            navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName)) {
+                                launchSingleTop = true
+                            }
+                        })
                 }
-                )
             }
         }
     }
 }
 
 
+/**
+ * Renders a single saved city in the list.
+ *
+ * @param cityName The name of the city to display.
+ * @param index The index of the city in the list.
+ * @param onDeleteClick A callback function to handle the delete click event.
+ * @param onConfirmClick A callback function to handle the confirm click event.
+ */
 @Composable
 private fun SavedCityRenderer(
     cityName: String,
     index: Int,
-    onDeleteClick: (Int) -> Unit,
-    onConfirmClick: (Int) -> Unit
+    onDeleteClick: () -> Unit,
+    onConfirmClick: () -> Unit
 ) {
     if (cityName.length < 4) {
         return
     }
     val nameList = CityNameSplit(cityName)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clickable {
-                onConfirmClick(index)
-            }
+            .clickable { onConfirmClick() }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-        )
-        {
+        ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(nameList.first(), style = MaterialTheme.typography.labelSmall)
-
-                //this text font color is gray
                 Text(
                     nameList[1], style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
             Icon(
-                modifier = Modifier.clickable {
-                    onDeleteClick(index)
-                },
+                modifier = Modifier.clickable { onDeleteClick() },
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Delete this",
+                contentDescription = "Delete this city",
             )
         }
-
     }
 }
 
-//sample:input  "Beijing, BJ, China"  output ["Beijing", " BJ, China"]
+// Splits a city name into two parts: the city name and the region/country.
 private fun CityNameSplit(cityName: String): List<String> {
-
-    var splitted = cityName.split(',')
-    var name1 = splitted.first()
-    var name2 = cityName.replace(name1, "")
-    //name2 remove first 2 characters
-    name2 = name2.substring(2)
+    val splitted = cityName.split(',')
+    val name1 = splitted.first()
+    val name2 = cityName.replace(name1, "").substring(2)
     return listOf(name1, name2)
 }

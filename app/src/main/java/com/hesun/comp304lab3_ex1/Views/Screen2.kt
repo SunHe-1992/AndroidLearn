@@ -39,29 +39,31 @@ fun Screen2(
     cityName: String
 ) {
     cityVM.naviIndex = 1
-    var strCity = cityName
-    if (strCity.isNullOrEmpty())
-        strCity = cityVM.cityName
 
-    weatherVM.getWeather(strCity)
+    // Use a safer approach to handle potentially empty city name
+    var cityToDisplay = if (cityName.isNullOrEmpty()) {
+        cityVM.cityName // Fallback to the city name in ViewModel if cityName is empty
+    } else {
+        cityName
+    }
+
+    weatherVM.getWeather(cityToDisplay)
 
     Hesun_COMP304Lab3_Ex1Theme {
         if (weatherVM.weatherO != null) {
-            var weatherData = weatherVM.weatherO
-            if (weatherData != null) {
-                var icon =
-                    "https://openweathermap.org/img/wn/${weatherData.weather.get(0).icon}@2x.png"
-                WeatherScreen(
-                    innerPadding,
-                    weatherData.name, weatherData.main.temp.toString(),
-                    weatherData.main.feels_like.toString(),
-                    icon
-                )
-            }
+            val weatherData = weatherVM.weatherO ?: return@Hesun_COMP304Lab3_Ex1Theme // Handle null case
+
+            val iconUrl = "https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png"
+            WeatherScreen(
+                innerPadding,
+                weatherData.name,
+                weatherData.main.temp.toString(),
+                weatherData.main.feels_like.toString(),
+                iconUrl
+            )
         }
     }
 }
-
 
 @Composable
 fun WeatherScreen(

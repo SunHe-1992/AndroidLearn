@@ -37,7 +37,11 @@ import com.hesun.comp304lab3_ex1.RoomDB.City
 import com.hesun.comp304lab3_ex1.ViewModel.citiesViewModel
 import com.hesun.comp304lab3_ex1.ui.theme.Hesun_COMP304Lab3_Ex1Theme
 
-/*screen for city search*/
+/*
+ * Screen for searching cities.
+ *
+ * This screen allows users to input a city name, view suggested cities, and select a city to view its weather.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen1(
@@ -51,13 +55,13 @@ fun Screen1(
     var selectedIndex by remember { mutableStateOf(-1) }
     val keyboardController = LocalSoftwareKeyboardController.current
     var isDebug = false
+
     Hesun_COMP304Lab3_Ex1Theme {
         Column(
             modifier = Modifier
                 .safeDrawingPadding()
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
 
             OutlinedTextField(
@@ -66,19 +70,20 @@ fun Screen1(
                     .fillMaxWidth(),
                 value = searchText,
                 onValueChange = { searchText = it },
-                //prompt text
+                // Prompt text for the text field
                 placeholder = { Text("Enter a city name") },
                 shape = RoundedCornerShape(15),
                 leadingIcon = {
-                    if (searchText.isNotEmpty())
+                    if (searchText.isNotEmpty()) {
                         Icon(
                             modifier = Modifier.clickable {
                                 searchText = ""
                                 cityVM.clearCities()
                             },
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close icon"
+                            contentDescription = "Clear search text"
                         )
+                    }
                 },
                 trailingIcon = {
                     if (searchText.isNotEmpty()) {
@@ -90,8 +95,7 @@ fun Screen1(
                 },
             )
 
-
-            //display List<string> in a LazyColumn, LazyColumn elements interval space is 4.dp
+            // Display a list of suggested cities in a LazyColumn
             if (cityVM.cities.size > 0) {
                 LazyColumn(
                     modifier = Modifier
@@ -99,109 +103,108 @@ fun Screen1(
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
-                )
-                {
+                ) {
                     items(cityVM.cities.size) { index ->
-                        CityRenderer(cityVM.cities.get(index),
-                            index,
-                            onItemClick = {
-                                if (selectedIndex != index) {
-                                    selectedIndex = index
-                                    searchText = cityVM.cities[index]
-                                    cityVM.clearCities()
-                                    cityVM.cityName = searchText
-                                } else {
-                                    selectedIndex = -1
-                                }
-                            })
+                        CityRenderer(cityVM.cities.get(index), index) {
+                            if (selectedIndex != index) {
+                                selectedIndex = index
+                                searchText = cityVM.cities[index]
+                                cityVM.clearCities()
+                                cityVM.cityName = searchText
+                            } else {
+                                selectedIndex = -1
+                            }
+                        }
                     }
-
-
                 }
             }
+
+            // Debug buttons for database operations (optional, can be removed in production)
             if (isDebug) {
                 Button(onClick = {
                     cityVM.insertToDB(City(Math.random().toInt(), searchText.trim()))
-                }) { Text("save to db") }
+                }) { Text("Save to DB") }
 
                 Button(onClick = {
                     cityVM.deleteOneCity(searchText.trim())
-                }) { Text("delete from db") }
+                }) { Text("Delete from DB") }
 
                 Button(onClick = {
                     cityVM.deleteAllCities()
-                }) { Text("delete all cities") }
+                }) { Text("Delete All Cities") }
 
                 Button(onClick = {
-                    var cityList = cityVM.getDBCities()
-                    //log citiList
+                    val cityList = cityVM.getDBCities()
                     cityList.forEach {
                         Log.d("city", it.toString())
                     }
-
-                }) { Text("read db") }
+                }) { Text("Read DB") }
             }
+
             Button(onClick = {
                 cityVM.cityName = searchText.trim()
                 navController.navigate(NavItem.Screen2.createRoute(cityVM.cityName)) {
                     launchSingleTop = true
                 }
                 cityVM.insertToDB(City(Math.random().toInt(), cityVM.cityName))
-            }) { Text("show weather of this city") }
-
-
+            }) { Text("Show Weather of This City") }
         }
     }
 }
 
-
+/**
+ * Renders a single city suggestion in the list.
+ *
+ * @param cityName The name of the city to display.
+ * @param index The index of the city in the list.
+ * @param onItemClick A callback function to handle the click event.
+ */
 @Composable
-private fun CityRenderer(cityName: String, index: Int, onItemClick: (Int) -> Unit) {
+private fun CityRenderer(cityName: String, index: Int, onItemClick: () -> Unit) {
     if (cityName.length < 4) {
         return
     }
     val nameList = CityNameSplit(cityName)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clickable { onItemClick(index) }
+            .clickable { onItemClick() }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-        )
-        {
+        ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(nameList.first(), style = MaterialTheme.typography.labelSmall)
 
-                //this text font color is gray
+                // Display the city's region and country in a smaller font size and gray color
                 Text(
                     nameList[1], style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
             Icon(
-                modifier = Modifier.clickable {
-                    onItemClick(index)
-                },
+                modifier = Modifier.clickable { onItemClick() },
                 imageVector = Icons.Default.Done,
-                contentDescription = "Use this city",
+                contentDescription = "Select this city",
             )
         }
-
     }
 }
 
-//sample:input  "Beijing, BJ, China"  output ["Beijing", " BJ, China"]
+/**
+ * Splits a city name into two parts: the city name and the region/country.
+ *
+ * @param cityName The full city name.
+ * @return A list containing the city name and the region/country.
+ */
 private fun CityNameSplit(cityName: String): List<String> {
-
-    var splitted = cityName.split(',')
-    var name1 = splitted.first()
-    var name2 = cityName.replace(name1, "")
-    //name2 remove first 2 characters
-    name2 = name2.substring(2)
+    val splitted = cityName.split(',')
+    val name1 = splitted.first()
+    val name2 = cityName.replace(name1, "").substring(2)
     return listOf(name1, name2)
 }

@@ -24,18 +24,21 @@ import com.hesun.comp304lab3_ex1.Views.MyTopBar
 import com.hesun.comp304lab3_ex1.ui.theme.Hesun_COMP304Lab3_Ex1Theme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        //create db and vm
+        // Initialize database and ViewModels
         val database = CityDataBase.getInstance(applicationContext)
         val repository = AppRepository(database.getCityDao())
+
         val cityVMFactory = ViewModelFactory(repository)
         val cityVM = ViewModelProvider(this, cityVMFactory)[citiesViewModel::class.java]
 
         val weatherVMFactory = WeatherViewModelFactory(repository)
         val weatherVM = ViewModelProvider(this, weatherVMFactory)[WeatherViewModel::class.java]
+
         setContent {
             Hesun_COMP304Lab3_Ex1Theme {
                 MyFirstScaffold(cityVM, weatherVM)
@@ -44,7 +47,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+/**
+ * MyFirstScaffold composes the main layout of the application using Scaffold with a navigation bar,
+ * an optional top bar, and a content area.
+ *
+ * @param cityVM ViewModel for managing city data.
+ * @param weatherVM ViewModel for managing weather data.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyFirstScaffold(cityVM: citiesViewModel, weatherVM: WeatherViewModel) {
@@ -54,14 +63,12 @@ fun MyFirstScaffold(cityVM: citiesViewModel, weatherVM: WeatherViewModel) {
         modifier = Modifier.safeDrawingPadding(),
         bottomBar = { MyBottomBar(navController, cityVM) },
         topBar = { MyTopBar() }
-
+        // TODO: Uncomment and implement MyFavButton if needed
 //        floatingActionButton = { MyFavButton() },
 //        floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
         Column {
-
             MyNavGraph(innerPadding, navController = navController, cityVM, weatherVM)
         }
-
     }
 }
