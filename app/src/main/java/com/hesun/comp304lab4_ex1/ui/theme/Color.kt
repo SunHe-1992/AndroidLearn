@@ -1,4 +1,4 @@
-package com.hesun.comp304lab3_ex1.ui.theme
+package com.hesun.comp304lab4_ex1.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
