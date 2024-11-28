@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.hesun.comp304lab4_ex1"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.hesun.comp304lab4_ex1"
