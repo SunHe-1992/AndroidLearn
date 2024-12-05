@@ -8,6 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
@@ -21,6 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -37,6 +41,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.hesun.comp304lab4_ex1.ui.theme.Hesun_COMP304Lab4_Ex1Theme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var workManager: WorkManager
 
     val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -57,6 +63,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        workManager = WorkManager.getInstance(applicationContext)
         enableEdgeToEdge()
         //ask permission for location
         permissionLauncher.launch(
@@ -67,25 +75,28 @@ class MainActivity : ComponentActivity() {
         setContent {
             Hesun_COMP304Lab4_Ex1Theme {
                 var context = LocalContext.current
-                var Toronto = LatLng(43.651070, -79.347015)
-                val camPos = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(Toronto, 10f)
 
-                }
                 Scaffold(
                     modifier = Modifier.safeContentPadding(),
+                    floatingActionButton =
+                    {
+                        Button(
+                            onClick = {
+                                var request =
+                                    OneTimeWorkRequestBuilder<TestWorker>().build()
+                                workManager.enqueue(request)
+                            }) {
+                            Text("Test")
+                        }
+                    }
+
                 )
                 { paddingValues ->
 
-                    Button(onClick = {}) {
-                        Text("button test")
-                    }
 
-                    GoogleMapComposeApp()
-//            GoogleMap(
-//                modifier = Modifier.safeContentPadding(),
-//                cameraPositionState = camPos
-//            ) { }
+                    FindLocation()
+                    TestGeofencing()
+
                 }
             }
         }
@@ -93,14 +104,16 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     @Composable
-    fun GoogleMapComposeApp() {
+    fun FindLocation() {
 
         val context = LocalContext.current
         var myLocation by remember { mutableStateOf<LatLng?>(null) }
         val fusedLocationClient =
             remember { LocationServices.getFusedLocationProviderClient(context) }
         val locationRequest =
-            remember { LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000).build() } //create a location request with Builder
+            remember {
+                LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000).build()
+            } //create a location request with Builder
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(.0, .0), 15f)
         }
@@ -117,7 +130,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-
             if (myLocation == null) {
                 fusedLocationClient.requestLocationUpdates(
                     locationRequest,
@@ -127,12 +139,12 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        GoogleMapView(myLocation, cameraPositionState)
+        DisplayMap(myLocation, cameraPositionState)
     }
 
 
     @Composable
-    fun GoogleMapView(userLocation: LatLng?, cameraPositionState: CameraPositionState) {
+    fun DisplayMap(userLocation: LatLng?, cameraPositionState: CameraPositionState) {
         GoogleMap(
             modifier = Modifier.safeDrawingPadding(),
             cameraPositionState = cameraPositionState
@@ -140,11 +152,33 @@ class MainActivity : ComponentActivity() {
             userLocation?.let {
                 Marker(
                     state = MarkerState(position = it),
-                    title = "You are here"
+                    title = "Here I am"
                 )
             }
         }
     }
 
+
+    @Composable
+    fun TestGeofencing() {
+        val context = LocalContext.current
+        val geofenceId = "TestGeofence1"
+        val geofenceCenter = LatLng(43.9019, -79.3910)
+        val geofenceRadius = 200f // 200 meters
+
+        // Setup Geofence when the app starts
+        LaunchedEffect(Unit) {
+            val geofence = createGeofence(geofenceId, geofenceCenter, geofenceRadius)
+            addGeofence(context, geofence)
+        }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        var request = OneTimeWorkRequestBuilder<TestWorker>().build()
+        workManager.enqueue(request)
+
+    }
 }
 
