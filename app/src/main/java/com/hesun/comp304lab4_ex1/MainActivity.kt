@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -44,6 +45,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
@@ -155,7 +157,9 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         var isMapTypeToggled by remember { mutableStateOf(false) }
         var markerPosition by remember { mutableStateOf(userLocation) }
+        var gfPosition by remember { mutableStateOf(userLocation) }
         var isshowingMarker by remember { mutableStateOf(false) }
+        var isshowingGeofence by remember { mutableStateOf(false) }
         var mapProperties by remember {
             mutableStateOf(
                 MapProperties(
@@ -173,7 +177,7 @@ class MainActivity : ComponentActivity() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Map Type: " + if (isMapTypeToggled) "SATELLITE" else "NORMAL",
+                    text = if (isMapTypeToggled) "SATELLITE" else "NORMAL",
                     style = MaterialTheme.typography.bodySmall
                 )
 
@@ -220,8 +224,10 @@ class MainActivity : ComponentActivity() {
                     var location: LatLng = userLocation!!
                     if (location == null)
                         location = LatLng(43.7863, -79.1839)
+                    gfPosition = location
                     val geofence = createGeofence("TestGeofence1", userLocation!!, 200f)
                     addGeofence(context, geofence)
+                    isshowingGeofence = true
                 }
             }) {
                 Text(
@@ -236,7 +242,6 @@ class MainActivity : ComponentActivity() {
                     // Update marker position & visiblity when map is clicked
                     markerPosition = clickedLatLng
                     isshowingMarker = !isshowingMarker
-
                 },
                 onMapLongClick = { clickedLatLng ->
                     //  Toast for location detail
@@ -260,6 +265,18 @@ class MainActivity : ComponentActivity() {
                         contentDescription = "Clicked Location"
                     )
                 }
+                if (isshowingGeofence && gfPosition != null)
+                    Circle(
+                        center = gfPosition!!,
+                        clickable = true,
+                        fillColor = Color.Blue.copy(alpha = 0.3f),
+                        radius = 200.0, // Specify the radius in meters
+                        strokeColor = Color.Black,
+                        strokeWidth = 2f,
+                        tag = "geofence",
+                        onClick = { circle ->
+                        }
+                    )
             }
         }
     }
