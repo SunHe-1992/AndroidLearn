@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var workManager: WorkManager
 
+    // Permission launcher for fine and coarse location permissions
     val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -71,6 +72,8 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+    // Permission launcher specifically for background location access
     val bg_permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -118,10 +121,12 @@ class MainActivity : ComponentActivity() {
         var myLocation by remember { mutableStateOf<LatLng?>(null) }
         val fusedLocationClient =
             remember { LocationServices.getFusedLocationProviderClient(context) }
+        // Create location request with high accuracy and 10-second interval
         val locationRequest =
             remember {
                 LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000).build()
-            } //create a location request with Builder
+            }
+        // Create camera position state
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(.0, .0), 15f)
         }
@@ -129,6 +134,7 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(Unit) {
             val locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
+                    // Update location and camera when new location is received
                     locationResult.lastLocation?.let { location ->
                         val newLocation = LatLng(location.latitude, location.longitude)
                         myLocation = newLocation
@@ -138,6 +144,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            // Request location updates if no location is set
             if (myLocation == null) {
                 fusedLocationClient.requestLocationUpdates(
                     locationRequest,
@@ -151,7 +158,11 @@ class MainActivity : ComponentActivity() {
 
     }
 
-
+    /**
+     * Composable function to display Google Map with various interactive features
+     * @param userLocation Current user's location
+     * @param cameraPositionState State of the map camera
+     */
     @Composable
     fun DisplayMap(userLocation: LatLng?, cameraPositionState: CameraPositionState) {
         val context = LocalContext.current
@@ -195,7 +206,7 @@ class MainActivity : ComponentActivity() {
                         uncheckedThumbColor = MaterialTheme.colorScheme.secondary
                     )
                 )
-
+                // Button to trigger WorkManager background task
                 Button(
                     onClick = {
                         var request = OneTimeWorkRequestBuilder<TestWorker>().build()
@@ -208,7 +219,9 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+            // Geofence setup button
             Button(onClick = {
+                // Check and request background location permission if needed
                 if (ActivityCompat.checkSelfPermission(
                         context,
                         Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -220,7 +233,7 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                 } else {
-                    // Setup Geofence when click the button
+                    // Create and add geofence when permission is granted
                     var location: LatLng = userLocation!!
                     if (location == null)
                         location = LatLng(43.7863, -79.1839)
@@ -234,6 +247,7 @@ class MainActivity : ComponentActivity() {
                     text = "GeoFence"
                 )
             }
+            // Google Map composable with interactive features
             GoogleMap(
                 properties = mapProperties,
                 modifier = Modifier.safeDrawingPadding(),
@@ -255,6 +269,7 @@ class MainActivity : ComponentActivity() {
                     cameraPositionState
                 }
             ) {
+                // Conditionally show marker on map click
                 if (isshowingMarker && markerPosition != null) {
                     Marker(
                         state = MarkerState(position = markerPosition!!),
@@ -265,6 +280,7 @@ class MainActivity : ComponentActivity() {
                         contentDescription = "Clicked Location"
                     )
                 }
+                // Conditionally show geofence circle
                 if (isshowingGeofence && gfPosition != null)
                     Circle(
                         center = gfPosition!!,
